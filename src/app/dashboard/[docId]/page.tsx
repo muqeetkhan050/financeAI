@@ -3,18 +3,13 @@ import { ChatInterface } from "@/components/ChatInterface";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-// Mock document data — will be replaced with real DB query
 const MOCK_DOC = {
   id: "1",
   file_name: "Q3-2025-Financial-Report.docx",
   created_at: "2026-04-01",
 };
 
-export default async function DocPage({
-  params,
-}: {
-  params: Promise<{ docId: string }>;
-}) {
+export default async function DocPage({ params,}: {  params: Promise<{ docId: string }>;}) {
   const { docId } = await params;
 
 
