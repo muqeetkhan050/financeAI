@@ -1,7 +1,7 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { queryOne } from "./db";
+import { queryOne } from "@/auth/db";
 
 export const authOptions: NextAuthOptions = {
   providers: [

@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { BarChart3, Loader2 } from "lucide-react";
 
-export default function RegisterPage() {
-  const [name, setName] = useState("");
+export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -18,28 +18,16 @@ export default function RegisterPage() {
     setError("");
     setLoading(true);
 
-    // TODO: Replace with real API call + NextAuth signIn
-    // const res = await fetch("/api/auth/register", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({ name, email, password }),
-    // });
-    // if (!res.ok) {
-    //   const data = await res.json();
-    //   setError(data.error || "Registration failed");
-    //   setLoading(false);
-    //   return;
-    // }
-    // await signIn("credentials", { email, password, redirect: false });
-    // router.push("/dashboard");
+    const result = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
 
-    // Simulate registration for now
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    if (email && password.length >= 8) {
-      router.push("/dashboard");
+    if (result?.error) {
+      setError("Invalid email or password");
     } else {
-      setError("Please enter a valid email and password (min 8 chars)");
+      router.push("/dashboard");
     }
 
     setLoading(false);
@@ -49,26 +37,13 @@ export default function RegisterPage() {
     <div className="max-w-md mx-auto px-6 py-20">
       <div className="text-center mb-8">
         <BarChart3 size={32} className="mx-auto mb-3 text-amber-500" />
-        <h1 className="text-2xl font-bold">Create your account</h1>
+        <h1 className="text-2xl font-bold">Welcome back</h1>
         <p className="text-sm text-zinc-500 mt-1">
-          Start analyzing financial documents with AI
+          Sign in to access your documents
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm text-zinc-400 mb-1">Name</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="John Doe"
-            className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-700
-              text-zinc-200 focus:outline-none focus:border-amber-500
-              placeholder:text-zinc-600"
-          />
-        </div>
-
         <div>
           <label className="block text-sm text-zinc-400 mb-1">Email</label>
           <input
@@ -89,9 +64,8 @@ export default function RegisterPage() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Minimum 8 characters"
+            placeholder="••••••••"
             required
-            minLength={8}
             className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-700
               text-zinc-200 focus:outline-none focus:border-amber-500
               placeholder:text-zinc-600"
@@ -114,18 +88,18 @@ export default function RegisterPage() {
           {loading ? (
             <>
               <Loader2 size={16} className="animate-spin" />
-              Creating account...
+              Signing in...
             </>
           ) : (
-            "Create Account"
+            "Sign In"
           )}
         </button>
       </form>
 
       <p className="text-center text-zinc-500 text-sm mt-6">
-        Already have an account?{" "}
-        <Link href="/login" className="text-amber-500 hover:underline">
-          Sign in
+        Don&apos;t have an account?{" "}
+        <Link href="/register" className="text-amber-500 hover:underline">
+          Sign up
         </Link>
       </p>
     </div>
