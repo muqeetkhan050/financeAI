@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 // import { Providers } from "@/components/Providers";
 import Providers from "@/components/Providers";
-import { Navbar } from "@/components/Navbar";
+import  Navbar  from "@/components/Navbar";
 
 export const metadata: Metadata = {
   title: "FinanceAI Analyst",
