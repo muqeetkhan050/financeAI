@@ -21,7 +21,7 @@ CREATE TABLE chunks (
   id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   document_id UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
   content     TEXT NOT NULL,
-  embedding   vector(1536),
+  embedding   vector(384),
   chunk_index INTEGER NOT NULL
 );
 

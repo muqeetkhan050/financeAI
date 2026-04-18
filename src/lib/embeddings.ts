@@ -40,9 +40,9 @@ export async function storeAllChunks(
   documentId: string,
   chunks: { content: string; index: number }[]
 ) {
-  for (const chunk of chunks) {
-    await storeChunk(documentId, chunk.content, chunk.index);
-  }
+  await Promise.all(
+    chunks.map((chunk) => storeChunk(documentId, chunk.content, chunk.index))
+  );
 }
 
 export async function searchSimilarChunks(

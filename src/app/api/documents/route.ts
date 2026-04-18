@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+
+export const maxDuration = 300; // 5 minutes for embedding generation
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth/auth";
 import { query, queryOne } from "@/auth/db";
