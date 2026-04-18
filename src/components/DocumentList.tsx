@@ -1,4 +1,4 @@
-// "use client";
+"use client";
 
 // import { FileText, Trash2 } from "lucide-react";
 // import Link from "next/link";
@@ -75,8 +75,6 @@
 //   );
 // }
 
-
-"use client";
 
 import { useState, useEffect, useCallback } from "react";
 import { FileText, Trash2, Loader2 } from "lucide-react";

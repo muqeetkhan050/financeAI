@@ -10,7 +10,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ["mammoth", "pg"],
+  serverExternalPackages: ["mammoth", "pg", "@xenova/transformers"],
+  turbopack: {
+    root: __dirname,
+  },
 };
 
 export default nextConfig;

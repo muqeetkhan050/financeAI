@@ -1,26 +1,22 @@
+
 import { query, execute } from '../auth/db';
+import { pipeline, Tensor, type FeatureExtractionPipeline } from '@xenova/transformers';
 
-// Turn text into a 1536-dimension vector using OpenAI
-export async function generateEmbedding(text: string): Promise<number[]> {
-  const res = await fetch("https://api.openai.com/v1/embeddings", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "text-embedding-3-small",
-      input: text,
-    }),
-  });
+// Singleton — model is downloaded once on first use (~25 MB) and cached locally
+let embedder: FeatureExtractionPipeline | null = null;
 
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Embedding API failed: ${err}`);
+async function getEmbedder(): Promise<FeatureExtractionPipeline> {
+  if (!embedder) {
+    embedder = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2') as FeatureExtractionPipeline;
   }
+  return embedder;
+}
 
-  const data = await res.json();
-  return data.data[0].embedding;
+// Turn text into a 384-dimension vector locally (no API key needed)
+export async function generateEmbedding(text: string): Promise<number[]> {
+  const extractor = await getEmbedder();
+  const output = await extractor(text, { pooling: 'mean', normalize: true }) as Tensor;
+  return Array.from(output.data as Float32Array);
 }
 
 // Store a single chunk with its embedding vector
@@ -39,7 +35,7 @@ export async function storeChunk(
   );
 }
 
-// Store all chunks for a document (processes sequentially to avoid rate limits)
+// Store all chunks for a document
 export async function storeAllChunks(
   documentId: string,
   chunks: { content: string; index: number }[]

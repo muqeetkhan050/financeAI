@@ -1,36 +1,47 @@
-import Anthropic from "@anthropic-ai/sdk";
+import Groq from "groq-sdk";
 
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY!,
+const client = new Groq({
+  apiKey: process.env.GROQ_API_KEY!,
 });
+
+const MODEL = "llama-3.3-70b-versatile";
 
 // One-shot call — used for generating insights
 export async function generateResponse(
   systemPrompt: string,
   userMessage: string
 ): Promise<string> {
-  const response = await client.messages.create({
-    model: "claude-sonnet-4-20250514",
+  const response = await client.chat.completions.create({
+    model: MODEL,
     max_tokens: 2048,
-    system: systemPrompt,
-    messages: [{ role: "user", content: userMessage }],
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userMessage },
+    ],
   });
 
-  return response.content
-    .filter((b): b is Anthropic.TextBlock => b.type === "text")
-    .map((b) => b.text)
-    .join("\n");
+  return response.choices[0]?.message?.content ?? "";
 }
 
 // Streaming call — used for chat (returns tokens one at a time)
-export function streamResponse(
+export async function* streamResponse(
   systemPrompt: string,
   messages: { role: "user" | "assistant"; content: string }[]
 ) {
-  return client.messages.stream({
-    model: "claude-sonnet-4-20250514",
+  const stream = await client.chat.completions.create({
+    model: MODEL,
     max_tokens: 2048,
-    system: systemPrompt,
-    messages,
+    messages: [{ role: "system", content: systemPrompt }, ...messages],
+    stream: true,
   });
+
+  for await (const chunk of stream) {
+    const text = chunk.choices[0]?.delta?.content;
+    if (text) {
+      yield {
+        type: "content_block_delta" as const,
+        delta: { type: "text_delta" as const, text },
+      };
+    }
+  }
 }
