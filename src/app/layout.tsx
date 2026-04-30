@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 // import { Providers } from "@/components/Providers";
 import Providers from "@/components/Providers";
-import  {Navbar}  from "@/components/Navbar";
+import { AppShell } from "@/app/AppShell";
 
 export const metadata: Metadata = {
   title: "FinanceAI Analyst",
@@ -21,8 +21,10 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-zinc-950 text-zinc-100 min-h-screen">
         <Providers>
-          <Navbar />
-          <main>{children}</main>
+           
+                <AppShell>
+                  {children}
+                </AppShell>
         </Providers>
       </body>
     </html>
